@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Space</title>
+    <link rel="stylesheet" href="/aboutus/aboutus.css">
+
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.3)),url(/aboutpho/group.jpeg) ;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+
+}
+
+.navbar {
+    width: 80%;
+    margin-left: 150px;
+    margin-top: 30px;
+    background-color: #81D4FA;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px;
+    border-radius: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar a {
+    color: black;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+.navbar a:first-child {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+}
+
+.container {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    margin-top: 80px;
+}
+
+h1 {
+    font-size: 3em;
+    color: #000;
+}
+
+.highlight {
+    color: #66b3ff;
+}
+
+.subtitle {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    margin-top: 100px;
+}
+
+.card {
+    width: 300px;
+    height: 300px;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    text-align: center;
+
+}
+
+.card img {
+    width: 100%;
+    height: 80%;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+
+.card h3 {
+    margin: 10px 0;
+    font-size: 1.2em;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="#">Safe <span style="color: black;">space</span></a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Home">หน้าหลัก</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Library">คลังความรู้</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=About">เกี่ยวกับพวกเรา</a>
+    </div>
+    <div class="bg">
+
+    </div>
+    <div class="grid-container">
+            <div class="card">
+                <img src="https://drive.google.com/uc?export=view&id=<?=19x-FGOYVIbibjng0Fa3LuJld5IswzabY" alt="รูปภาพ 1">
+                <h3>นางสาวปทุมพร อนุสิทธิ์</h3>
+            </div>
+            <div class="card">
+                <img src="/aboutpho/นางสาวขวัญวริน วงษ์งาน.JPG " alt="รูปภาพ 2">
+                <h3>นางสาวขัวญริน วงษ์งาน</h3>
+            </div>
+            <div class="card">
+                <img src="/aboutpho/นางสาวธัญรัตน์ วสุยิ่ง.jpg " alt="รูปภาพ 3">
+                <h3>นางสาวธัญรัตน์ วสุยิ่ง</h3>
+            </div>
+            <div class="card">
+                <img src="/aboutpho/นายณภัทร คำพันธ์.JPG " alt="รูปภาพ 4">
+                <h3>นายณภัทร คำพันธ์</h3>
+            </div>
+        </div>
+
+
+
+</body>
+</html>
+
