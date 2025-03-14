@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <title>Safe Space</title>
+
+    <style>
+      
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.navbar {
+    width: 80%;
+    margin-left: 150px;
+    margin-top: 30px;
+    background-color: #81D4FA;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px;
+    border-radius: 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.navbar a {
+    color: black;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+.navbar a:first-child {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+}
+
+.container {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    margin-top: 80px;
+}
+
+h1 {
+    font-size: 3em;
+    color: #000;
+}
+
+.highlight {
+    color: #66b3ff;
+}
+
+.subtitle {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+#map {
+    height: 100vh;
+    width: 100%;
+}
+
+
+.risk-buttons {
+            margin-bottom : 20px ;
+    }
+        .risk-button {
+            position : fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #81D4FA;
+            color: white;
+            padding: 12px 20px;
+            margin-right: 650px;
+            margin-bottom: 50px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .risk-button a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="#">Safe <span style="color: black;">space</span></a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Home">หน้าหลัก</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Library">คลังความรู้</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=About">เกี่ยวกับพวกเรา</a>
+    </div>
+    
+    <div id="map"></div>
+    
+    <button class="risk-button">
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Index">⚠️ ดูจุดเสี่ยงสภาพอากาศ</a>
+    </button>
+    <script>
+      var map = L.map('map').setView([13.736717, 100.523186], 13); // กรุงเทพฯ เป็นค่าเริ่มต้น
+
+// เพิ่มแผนที่จาก OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+
+
+// ฟังก์ชันหาตำแหน่งผู้ใช้
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            
+            // อัปเดตตำแหน่งแผนที่
+            map.setView([lat, lng], 15);
+
+            // เพิ่ม marker บนตำแหน่งของผู้ใช้
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup("คุณอยู่ที่นี่ 📍")
+                .openPopup();
+        }, function(error) {
+            alert("ไม่สามารถเข้าถึงตำแหน่งของคุณได้");
+        });
+    } else {
+        alert("เบราว์เซอร์ของคุณไม่รองรับ Geolocation");
+    }
+}
+
+
+
+// Example of adding a marker
+L.marker([13.609520625886079, 100.60252456082196])
+    .addTo(map)
+    .bindPopup("ฝาท่อชำรุด 🕳️")
+    .openPopup();//open popup when page is load
+
+L.marker([13.60895468078294, 100.60028117476988])
+    .addTo(map)
+    .bindPopup("ฝาท่อชำรุด 🕳️")
+    .openPopup();//open popup when page is load
+
+// โหลดตำแหน่งเมื่อเปิดเว็บ
+window.onload = getLocation;
+
+L.marker([13.775961852131609, 100.5719135921897])
+    .addTo(map)
+    .bindPopup("palazzo")
+    .openPopup();//open popup when page is load
+
+    </script>
+</body>
+</html>
