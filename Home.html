@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Space</title>
+    <base target="_top">
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+.container {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+}
+h1 {
+    font-size: 3em;
+    color: #000;
+}
+.highlight {
+    color: #81D4FA;
+}
+.subtitle {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.buttons {
+    margin-top: 20px;
+}
+.button {
+    background-color: #81D4FA;
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    margin: 10px;
+    border-radius: 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+.button:hover {
+    background-color: #5599e6;
+}
+
+.button a{
+    text-decoration: none;
+    color: white;
+}
+.image-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    display: flex;
+}
+.image {
+    width: 50%;
+    height: auto;
+}
+    </style>
+  </head>
+  <body>
+
+     <div class="container">
+        <h1><span class="highlight">Safe</span> space</h1>
+        <p class="subtitle">“ เมือง<span class="highlight">ปลอดภัย</span>สำหรับทุกคน ”</p>
+        <div class="buttons">
+            <button class="button"><?var url = getUrl();?><a class="nav-link" href='<?=url?>?page=Citymap'>กดเพื่อดูจุดเสี่ยงในเมือง </a></button>
+            <button class="button"><?var url = getUrl();?><a class="nav-link" href='<?=url?>?page=Weathermap'>กดเพื่อดูจุดเสี่ยงสภาพอากาศ </a></button>
+        </div>
+    </div>
+  </body>
+</html>
