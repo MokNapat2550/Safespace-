@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base target="_top">
+    <script>
+     // แก้ไขฟังก์ชัน getWeatherData ในไฟล์ HTML ส่วนที่แสดงค่า PM2.5
+
+function getWeatherData(lat, lng) {
+  // เรียกใช้ UrlFetchApp จาก server-side
+  google.script.run.withSuccessHandler(function(response) {
+    try {
+      console.log("ข้อมูลที่ได้รับจาก API:", response); // บันทึกข้อมูลที่ได้รับทั้งหมด
+      
+      const data = JSON.parse(response);
+      
+      if (data.status === 'success') {
+        // ข้อมูลตำแหน่ง
+        const city = data.data.city || "ไม่ระบุเมือง";
+        const state = data.data.state || "ไม่ระบุรัฐ";
+        const country = data.data.country || "ไม่ระบุประเทศ";
+        document.getElementById('location').textContent = `ตำแหน่ง: ${city}, ${state}, ${country}`;
+        
+        // ข้อมูลสภาพอากาศ
+        const weather = data.data.current.weather;
+        const weatherDiv = document.getElementById('weather');
+        if (weather) {
+          weatherDiv.innerHTML = `
+              <h2>สภาพอากาศ</h2>
+              <div style="font-size: 2em; margin: 10px 0;">${weather.tp}°C</div>
+              <div style="margin-top: 10px;">
+                  ความชื้น: ${weather.hu}%<br>
+                  ความเร็วลม: ${weather.ws} m/s<br>
+                  ทิศทางลม: ${getWindDirection(weather.wd)}
+              </div>
+          `;
+        } else {
+          weatherDiv.innerHTML = `<h2>สภาพอากาศ</h2><p>ไม่พบข้อมูลสภาพอากาศ</p>`;
+        }
+        
+        // ตรวจสอบและแสดงข้อมูล PM2.5
+        const pollution = data.data.current.pollution;
+        const pmDiv = document.getElementById('pm');
+        
+        if (pollution) {
+          console.log("ข้อมูลมลพิษ:", pollution); // บันทึกข้อมูลมลพิษที่ได้รับ
+          
+          // ตรวจสอบว่ามีค่า aqius และ pm25 หรือไม่
+          const aqiUS = pollution.aqius !== undefined ? pollution.aqius : "ไม่มีข้อมูล";
+          let pm25 = "ไม่มีข้อมูล";
+          
+          // แสดงโครงสร้างของ pollution ใน console
+          for (const key in pollution) {
+            console.log(`pollution.${key} = ${pollution[key]}`);
+          }
+          
+          // ดูว่า pm25 อยู่ใน key ไหนบ้าง
+          if (pollution.pm25 !== undefined) {
+            pm25 = pollution.pm25;
+          } else if (pollution["pm2.5"] !== undefined) {
+            pm25 = pollution["pm2.5"];
+          } else if (pollution["PM2.5"] !== undefined) {
+            pm25 = pollution["PM2.5"];
+          } else if (pollution["PM25"] !== undefined) {
+            pm25 = pollution["PM25"];
+          }
+          
+          let aqiClass = 'aqi-good';
+          let aqiText = 'ดี';
+          
+          if (aqiUS > 100) {
+              aqiClass = 'aqi-unhealthy';
+              aqiText = 'ไม่ดีต่อสุขภาพ';
+          } else if (aqiUS > 50) {
+              aqiClass = 'aqi-moderate';
+              aqiText = 'ปานกลาง';
+          }
+          
+          if (aqiUS > 150) {
+              aqiClass = 'aqi-very-unhealthy';
+              aqiText = 'ไม่ดีต่อสุขภาพอย่างมาก';
+          }
+          
+          if (aqiUS > 200) {
+              aqiClass = 'aqi-hazardous';
+              aqiText = 'อันตราย';
+          }
+          
+          pmDiv.innerHTML = `
+              <h2>คุณภาพอากาศ (AQL)</h2>
+              <div style="font-size: 2em; margin: 10px 0;" class="${aqiClass}">${aqiUS}</div>
+              <div class="${aqiClass}">AQI: ${aqiText}</div>
+              <div style="margin-top: 10px;">
+              </div>
+          `;
+        } else {
+          pmDiv.innerHTML = `<h2>คุณภาพอากาศ (AQL)</h2><p>ไม่พบข้อมูลคุณภาพอากาศ</p>`;
+        }
+      } else {
+        displayError("ไม่สามารถรับข้อมูลได้: " + (data.data ? data.data.message : "ไม่มีข้อความแสดงข้อผิดพลาด"));
+      }
+    } catch (error) {
+      console.error("ข้อผิดพลาดในการประมวลผลข้อมูล:", error);
+      console.error("ข้อมูลที่ได้รับ:", response);
+      displayError("เกิดข้อผิดพลาดในการประมวลผลข้อมูล: " + error.message);
+    }
+  }).withFailureHandler(function(error) {
+    console.error("ข้อผิดพลาดในการเรียก API:", error);
+    displayError("เกิดข้อผิดพลาดในการเรียก API: " + error);
+  }).fetchIQAirData(lat, lng);
+}
+      
+      function getWindDirection(degrees) {
+        const directions = ['เหนือ', 'ตะวันออกเฉียงเหนือ', 'ตะวันออก', 'ตะวันออกเฉียงใต้', 
+                           'ใต้', 'ตะวันตกเฉียงใต้', 'ตะวันตก', 'ตะวันตกเฉียงเหนือ'];
+        const index = Math.round(degrees / 45) % 8;
+        return directions[index];
+      }
+      
+      function displayError(message) {
+        document.getElementById('location').textContent = "เกิดข้อผิดพลาด";
+        document.getElementById('weather').innerHTML = `<h2>สภาพอากาศ</h2><p>${message}</p>`;
+        document.getElementById('pm').innerHTML = `<h2>คุณภาพอากาศ (AQL)</h2><p>${message}</p>`;
+        console.error(message);
+      }
+      
+      function initMap() {
+        // กรณีที่ไม่สามารถใช้ geolocation ได้ ให้ใช้พิกัดกรุงเทพฯเป็นค่าเริ่มต้น
+        getWeatherData(13.776248030098321, 100.57217789612235);
+        
+        document.getElementById('location').textContent = "กำลังค้นหาตำแหน่ง...";
+        
+        // ตรวจสอบว่าเบราวเซอร์สนับสนุน geolocation หรือไม่
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function(position) {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+              document.getElementById('location').textContent = `ตำแหน่ง: กำลังค้นหา... (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+              getWeatherData(latitude, longitude);
+            },
+            function(error) {
+              console.log("Geolocation error: " + error.message);
+              // ถ้ามีข้อผิดพลาด ให้ใช้พิกัดกรุงเทพฯ
+              getWeatherData(13.7563, 100.5018);
+            },
+            { timeout: 10000 }
+          );
+        } else {
+          // ถ้าเบราวเซอร์ไม่สนับสนุน geolocation
+          getWeatherData(13.7563, 100.5018);
+        }
+      }
+      
+      // เรียกใช้งานเมื่อหน้าเว็บโหลดเสร็จ
+      window.onload = initMap;
+    </script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-y: auto;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .weather-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .weather-info, .pm-info {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px;
+            min-width: 250px;
+        }
+        
+        .weather-info {
+            background-color: #e3f2fd;
+        }
+        
+        .pm-info {
+            background-color: #f9fbe7;
+        }
+        
+        .location {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        
+        .aqi-good { color: #4CAF50; }
+        .aqi-moderate { color: #fae209; }
+        .aqi-unhealthy { color: #FF9800; }
+        .aqi-very-unhealthy { color: #F44336; }
+        .aqi-hazardous { color: #9C27B0; }
+        
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+
+        .navbar {
+            width: 80%;
+            margin-left: 10%; /* แก้ไขจาก margin-left: 150px เพื่อให้อยู่ตรงกลางมากขึ้น */
+            margin-top: 30px;
+            background-color: #81D4FA;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 15px;
+            border-radius: 50px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: black;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+
+        .navbar a:first-child {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            z-index: 1;
+            margin-top: 120px; /* เพิ่มขึ้นเพื่อให้ไม่ทับกับ navbar */
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #000;
+        }
+
+        .highlight {
+            color: #66b3ff;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+         .risk-buttons {
+            margin-bottom : 20px ;
+    }
+        .risk-button {
+            position : fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #81D4FA;
+            color: white;
+            padding: 12px 20px;
+            margin-right: 650px;
+            margin-bottom: 50px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        
+        .risk-button a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* ปรับให้เหมาะกับมือถือ */
+        @media (max-width: 768px) {
+            .navbar {
+                width: 95%;
+                margin-left: 2.5%;
+                flex-wrap: wrap;
+            }
+            
+            .navbar a {
+                font-size: 1em;
+                padding: 8px 10px;
+            }
+            
+            .container {
+                margin-top: 150px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .risk-button {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                width: calc(100% - 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#">Safe <span style="color: black;">space</span></a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Home">หน้าหลัก</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Library">คลังความรู้</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=About">เกี่ยวกับพวกเรา</a>
+    </div>
+    <div class="container">
+        <h1>สภาพอากาศและคุณภาพอากาศ</h1>
+        <div class="location" id="location">กำลังค้นหาตำแหน่งของคุณ...</div>
+        
+        <div class="weather-display">
+            <div class="weather-info" id="weather">
+                <h2>สภาพอากาศ</h2>
+                <p class="loading">กำลังโหลดข้อมูล...</p>
+            </div>
+            
+            <div class="pm-info" id="pm">
+                <h2>คุณภาพอากาศ (AQI)</h2>
+                <p class="loading">กำลังโหลดข้อมูล...</p>
+            </div>
+        </div>
+    </div>
+    
+    <button class="risk-button">
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Index">⚠️ ดูจุดเสี่ยงสภาพอากาศ</a>
+    </button>
+</body>
+</html>
