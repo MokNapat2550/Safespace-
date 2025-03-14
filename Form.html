@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mitr">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+		integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<style>
+		      body {
+       font-family: Arial, sans-serif;
+       text-align: center;
+       background-color: #f0f8ff;
+       margin: 0;
+       padding: 0;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center;
+       height: 100vh;
+       position: relative;
+       overflow: hidden;
+  }
+    .container {
+      position: relative;
+      text-align: center;
+      z-index: 1;
+  }
+    h1 {
+     font-size: 3em;
+     color: #000;
+  }
+    .highlight {
+     color: #81D4FA;
+  }
+    .subtitle {
+     font-size: 1.5em;
+     font-weight: bold;
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="navbar">
+        <a href="#">Safe <span style="color: black;">space</span></a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Home">หน้าหลัก</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Library">คลังความรู้</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=About">เกี่ยวกับพวกเรา</a>
+    </div>
+
+	<div class="container-fluid">
+
+		<div class="row">
+			<div class="col-md-auto mx-auto">
+
+				<nav class="navbar navbar-expand-sm navbar-dark bg-danger flex-sm-nowrap flex-wrap">
+					<div class="container-fluid">
+						<button class="navbar-toggler flex-grow-sm-1 flex-grow-0 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbar5">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+						<span class="navbar-brand flex-grow-1"><i class="fa-solid fa-notes-medical"></i>  ระบบบันทึกข้อมูลจุดเสี่ยง</span>
+						<div class="navbar-collapse collapse flex-grow-1 justify-content-center" id="navbar5">
+							<ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+									<?var url = getUrl();?><a class="nav-link" href='<?=url?>?page=#'><i class="fa-solid fa-magnifying-glass"></i>. กลับหน้าค้นหาข้อมูล</a>
+								</li>
+							</ul>
+						</div>
+						<div class="flex-grow-1">
+							<!--spacer-->
+						</div>
+					</div>
+				</nav>
+
+				<div class="card">
+					<div class="card-header bg-info text-light">
+						Safespace
+					</div>
+					<div class="card-body">
+
+						<form class="main" id="form" novalidate="novalidate"
+							style="max-width: 600px;margin: 20px auto;">
+							<div id="forminner">
+								<div class="form-row">
+									<div class="form-group col-md-auto">
+										<label for="id">ชื่อ-นามสกุลผู้แจ้ง</label>
+										<input type="text area" class="form-control" id="id" name="id" maxlength="100" placeholder="ไม่ต้องใส่คำนำหน้าชื่อ">
+                        </div>
+										<div class="form-group col-md-auto">
+											<label for="stdCode">เบอร์โทรศัพท์</label>
+											<input type="text area" class="form-control" id="stdCode" name="stdCode" maxlength="20" placeholder="xxx-xxx-xxx">
+                        </div>
+											<div class="form-group col-md-auto">
+												<label for="firstname">เหตุการณ์</label>
+												<input type="text area" class="form-control" id="firstname" name="firstname" maxlength="200" placeholder="">
+                        </div>
+												<div class="form-group col-md-auto">
+													<label for="lastname">สถานที่</label>
+													<input type="text area" class="form-control" id="lastname" name="lastname" maxlength="100" placeholder="ตำบล , อำเภอ , จังหวัด">
+                        </div>
+													<div class="form-group col-md-auto">
+														<label for="address">รายละเอียด</label>
+														<input type="text area" class="form-control" id="address" name="address" maxlength="200" placeholder="รายละเอียดของเหตุการณ์">
+                        </div>
+														<div class="form-group col-md-auto">
+															<label for="tel">หมายเหตุ</label>
+															<input type="text" class="form-control" id="tel" name="tel" maxlength="100" placeholder="">
+                        </div>
+														
+
+																<!--อัปโหลดรูภาพ-->
+																<div class="row">
+																	<div class="form-group col-md-auto">
+																		<span>เลือกรูปภาพ</span>
+																		<div class="btn">
+
+																			<input id="files" type="file">
+                        </div>
+																		</div>
+																	</div>
+																	<div class="row justify-content-center">
+																		<div class="input-field col s6 text-center">
+																			<button type="submit" class="btn btn-danger mb-2" id="button" onclick="submitForm(); return false;">
+                            บันทึกข้อมูล
+                        </button>
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+						</form>
+
+						<div >
+							<div id="success" style="display:none">
+								<h4 class="left-align teal-text">
+									<center>
+บันทึกข้อมูลเรียบร้อย!
+									</center>
+								</h4>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+		integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+
+	<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('select');
+            var instances = M.FormSelect.init(elems);
+        });
+        var file, reader = new FileReader();
+        reader.onloadend = function (e) {
+            if (e.target.error != null) {
+                showError("File " + file.name + " could not be read.");
+                return;
+            } else {
+                google.script.run
+                    .withSuccessHandler(showSuccess)
+                    .uploadFile(e.target.result, file.name,
+                        $('input#id').val(),
+                        $('input#stdCode').val(),
+                        $('input#firstname').val(),
+                        $('input#lastname').val(),
+                        $('input#address').val(),
+                        $('input#tel').val(),
+                       
+                        
+                    );
+            }
+        };
+        function showSuccess(e) {
+            if (e === "OK") {
+                $('#forminner').hide();
+                $('#success').show();
+                $('#image').hide();
+                
+            } else {
+                showError(e);
+            }
+        }
+        function restartForm() {
+            $('#form').trigger("reset");
+            $('#forminner').show();
+            $('#success').hide();
+            $('#button').show();
+        }
+        
+        function submitForm() {
+            var id= $('input#id').val();
+            if (id.length === 0) {
+                showError("กรุณากรอกชื่อ-นามสกุล");
+                return;
+            }
+            var stdCode = $('input#stdCode').val();
+            if (stdCode.length === 0) {
+                showError("กรุณากรอกเบอร์โทรศัพท์");
+                return;
+            }            
+            var firstname = $('input#firstname').val();
+            if (firstname.length === 0) {
+                showError("กรุณากรอกเหตุการณ์");
+                return;
+            }
+            var lastname = $('input#lastname').val();
+            if (lastname.length === 0) {
+                showError("กรุณากรอกสถานที่");
+                return;
+            }
+            var add = $('input#address').val();
+            if (add.length === 0) {
+                showError("กรุณากรอกรายละเอียด");
+                return;
+            }
+            
+            var files = $('#files')[0].files;
+            if (files.length === 0) {
+                showError("กรุณาเลือกไฟล์ภาพ");
+                return;
+            }
+            document.getElementById("button").style.display = "none"
+            file = files[0];
+            if (file.size > 1024 * 1024 * 20) {
+                showError("The file size should be < 20 MB. ");
+                return;
+            }
+            showMessage("..ระบบกำลังบันทึกข้อมูล..");
+            reader.readAsDataURL(file);
+        }
+        function showError(e) {
+            Swal.fire({
+                title: 'คุณกรอกข้อมูลยังไม่ครบ!',
+                text: e,
+                icon: 'error',
+                confirmButtonText: 'ตกลง'
+            })
+        }
+        function showMessage(e) {
+            Swal.fire({
+                title: '..กรุณารอสักครู่..',
+                text: 'ระบบกำลังบันทึกข้อมูล',
+                showConfirmButton: false,
+              timer: 2000
+            })
+        }
+        $(document).ready(function () {
+            $('select').material_select();
+        });
+        document.getElementById("files").onchange = function () {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("image").src = e.target.result;
+                $('#image').show();
+            };
+            reader.readAsDataURL(this.files[0]);
+        };
+	</script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</body>
+
+</html>
