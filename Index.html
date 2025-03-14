@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <base target="_top">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mitr">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f8ff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh; /* Changed from height to min-height */
+      position: relative;
+      overflow-y: auto; /* Changed from hidden to auto */
+  }
+
+    .container {
+      position: relative;
+      text-align: center;
+      z-index: 1;
+      width: 100%;
+      padding: 20px; /* Added padding for better spacing */
+  }
+
+    h1 {
+      font-size: 3em;
+      color: #000;
+  }
+
+    .highlight {
+      color: #81D4FA;
+  }
+
+    .subtitle {
+      font-size: 1.5em;
+      font-weight: bold;
+  }
+</style>
+    </head>
+    <body>
+
+        <div class="navbar">
+        <a href="#">Safe <span style="color: black;">space</span></a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=Home">หน้าหลัก</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?pageLibrary">คลังความรู้</a>
+        <a class="nav-link" href="<?= ScriptApp.getService().getUrl() ?>?page=About">เกี่ยวกับพวกเรา</a>
+    </div>
+
+        <div class="container">
+            <br>
+            <div class="row">
+              <div class="col ">
+             
+             <div class="row">
+              <div class="col-md-4 mx-auto">
+                <nav class="navbar navbar-expand-sm navbar-dark bg-danger flex-sm-nowrap flex-wrap">
+					<div class="container-fluid">
+						<button class="navbar-toggler flex-grow-sm-1 flex-grow-0 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbar5">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+						<span class="navbar-brand flex-grow-1"><i class="fa-solid fa-magnifying-glass"></i>. ระบบค้นหาข้อมูล </span>
+						<div class="navbar-collapse collapse flex-grow-1 justify-content-center" id="navbar5">
+             
+							<ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+									<?var url = getUrl();?><a class="nav-link" href='<?=url?>?page=Form'><i class="fa-solid fa-notes-medical"></i>  เพิ่มจุดเสี่ยงที่นี่</a>
+								</li>
+							</ul>
+						</div>
+						<div class="flex-grow-1">
+							<!--spacer-->
+						</div>
+					</div>
+				</nav>
+             <div class="card text-center">
+             <div class="card-header">
+             ค้นหาข้อมูลจุดเสี่ยงได้ที่นี่
+             </div>
+             <div class="card-body">
+                  <!-- ## ฟอร์มค้นหา------------------------------------------------ -->
+                  <form id="search-form" class="form-inline" onsubmit="handleFormSubmit(this)">
+                    <div class="form-group mb-2">
+                      <label for="searchtext">กรุณากรอกข้อมูลที่ต้องการค้นหา</label>
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                      <input type="text" class="form-control" id="searchtext" name="searchtext" placeholder="ตำบล , อำเภอ , จังหวัด">
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">ค้นหา</button>
+                  </form>
+                  <!-- ## ปิดฟอร์ม ------------------------------------------- -->
+                  </div>
+                  </div>
+                  </div>
+                  </div>
+              </div>    
+            </div>
+            <div class="row">
+              <div class="col">
+             
+                <!-- ## สร้างตาราง ------------------------------------------------ -->
+                <div id="search-results" class="table-responsive">
+                  <!-- แสดงข้อมูลที่นี่ -->
+                </div>
+                <!-- ## จบตาราง ------------------------------------------------ -->
+                   
+              </div>
+            </div>
+        </div>
+        <!--##JAVASCRIPT ---------------------------------------------------- -->
+        <script>
+        
+          window.addEventListener("load", preventFormSubmit, true); 
+
+          function preventFormSubmit() {
+            var forms = document.querySelectorAll('form');
+            for (var i = 0; i < forms.length; i++) {
+              forms[i].addEventListener('submit', function(event) {
+              event.preventDefault();
+              });
+            }
+          }
+          
+           //ทำการส่งค่าจากฟอร์ม
+          function handleFormSubmit(formObject) {
+            google.script.run.withSuccessHandler(createTable).processForm(formObject);
+            document.getElementById("search-form").reset();
+          }
+         
+          //สร้างตารางและข้อมูลในตาราง
+          function createTable(dataArray) {
+            if(dataArray && dataArray !== undefined && dataArray.length != 0){
+              var result = "<table class='table table-sm table-striped table-hover' id='dtable'>"+
+                           "<thead style='white-space: nowrap'>"+
+                             "<tr>"+                               //Change table headings to match witht he Google Sheet
+                             "<th scope='col'>วัน/เวลา</th>"+
+                             "<th scope='col'>ชื่อ-นามสกุลผู้แจ้ง</th>"+
+                              "<th scope='col'>เบอร์โทรศัพท์</th>"+
+                              "<th scope='col'>เหตุการณ์</th>"+
+                              "<th scope='col'>สถานที่</th>"+
+                              "<th scope='col'>รายละเอียด</th>"+
+                              "<th scope='col'>หมายเหตุ</th>"+
+                              "<th scope='col'>‏‎‏‎‏‎</th>"+
+                              "<th scope='col'>รูปภาพ</th>"+
+                            "</tr>"+
+                          "</thead>";
+            for (var i = 0; i < dataArray.length; i++) {
+    result += "<tr>";
+    for (var j = 0; j < dataArray[i].length-1; j++) {
+        result += "<td>" + dataArray[i][j] + "</td>";
+    }
+    result += "<td class=\"table-info\">"+`<img src ="${dataArray[i][8]}" style = "width:200px; height:200px; rounded-3">`+"</td>";
+    result += "</tr>";
+}
+              result += "</table>";
+              var div = document.getElementById('search-results');
+              div.innerHTML = result;
+            }else{
+              var div = document.getElementById('search-results');
+              //div.empty()
+              div.innerHTML = "ไม่พบข้อมูลที่ค้นหา!";
+            }
+          }
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+         
+    </body>
+</html>
